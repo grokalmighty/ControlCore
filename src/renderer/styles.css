@@ -48,3 +48,16 @@ body {
     display: flex;
     gap: 5px;
 }
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.icon-btn:hover {
+    background: #f0f0f0;
+}
