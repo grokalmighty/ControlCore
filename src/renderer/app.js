@@ -154,4 +154,26 @@ class UnifiedSearch {
             this.executeResult(filteredResults[this.selectedIndex]);
         }
     }
+
+    async executeResult(result) {
+        try {
+            switch (result.type) {
+                case 'file':
+                    await window.electronAPI.openFile(result.path);
+                    break;
+                case 'app':
+                    await window.electronAPI.launchApp(result.path);
+                    break;
+                case 'web':
+                    await window.electronAPI.openWebSearch(result.query);
+                    break;
+                case 'command':
+                    await result.execute();
+                    break;
+            }
+            window.electronAPI.hideWindow();
+        } catch (error) {
+            console.error('Error executing result:', error);
+        }
+    }
 }
