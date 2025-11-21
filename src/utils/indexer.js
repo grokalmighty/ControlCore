@@ -51,4 +51,40 @@ class FileIndexer {
             return false; 
         }
     }
+
+    async indexDirectory(rootDir, options = {}) {
+        if (this.isIndexing) {
+            console.log('Indexing already in progress');
+            return;
+        }
+
+        this.isIndexing = true;
+        const startTime = Date.now();
+
+        try {
+            const defaultOptions = {
+                maxDepth = 6,
+                excludePatterns: [
+                    'node_modules', '.git', '.vscode', '.idea',
+                    'Library', 'AppData', 'Temp', 'tmp', 
+                    'cache', 'Cache', 'log', 'logs'
+                ],
+                maxFileSize: 50 * 1024 * 1024 // 50MB
+            };
+
+            const finalOptions = {...defaultOptions, ...options };
+
+            console.log(`Starting indexing: ${rootDir}`);
+            await this._indexDirectoryRecursive(rootDir, 0, finalOptions);
+
+            await this.saveIndex();
+
+            const endTime = Date.now();
+            console.log(`Indexing completed in ${(endTime - startTime) / 1000}s. ${this.index.size} files indexed.`);
+        } catch (error) {
+            console.error('Indexing failed:', error);
+        } finally {
+            this.isIndexing = false;
+        }
+    }
 }
