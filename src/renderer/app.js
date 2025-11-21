@@ -67,4 +67,23 @@ class UnifiedSearch {
 
         this.displayResults();
     }
+
+    displayResults() {
+        this.resultsList.innerHTML = '';
+        this.selectedIndex = 0;
+
+        const filteredResults = this.filterResults(this.currentResults);
+
+        if (filteredResults.length === 0) {
+            this.showNoResults();
+            return;
+        }
+
+        filteredResults.forEach((result, index) => {
+            const resultElement = this.createResultElement(result, index);
+            this.resultsList.appendChild(resultElement);
+        });
+
+        this.updateSelection();
+    }
 }
