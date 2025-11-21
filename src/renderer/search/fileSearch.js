@@ -86,4 +86,22 @@ class FileSearch {
         
         return results;
     }
+
+    getFileIcon(fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        const iconMap = {
+            'js': '📄',
+            'html': '🌐',
+            'css': '🎨',
+            'md': '📝',
+            'pdf': '📕',
+            'doc': '📘',
+            'docx': '📘',
+            'txt': '📄',
+            'png': '🖼️',
+            'jpg': '🖼️',
+            'jpeg': '🖼️'
+        };
+        return iconMap[extension] || '📄'
+    }
 }
