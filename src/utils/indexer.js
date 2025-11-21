@@ -18,4 +18,20 @@ class FileIndexer {
         this.indexPath = path.join(userDataPath, 'search-index.json');
         await this.loadIndex();
     }
+
+    async loadIndex() {
+        try {
+            const data = await fs.readFile(this.indexPath, 'utf8');
+            const savedIndex = JSON.parse(data);
+
+            if (savedIndex.version === this.indexVersion) {
+                this.index = new Map(savedIndex.index);
+                console.log(`Loaded index with ${this.index.size} files`);
+                return true;
+            }
+        } catch (error) {
+            console.log('No existing index found, creating new one');
+        }
+        return false;
+    }
 }
