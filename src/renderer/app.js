@@ -94,4 +94,22 @@ class UnifiedSearch {
             .filter(result => result.type === this.activeFilter)
             .slice(0, 10);
     }
+
+    createResultElement(result, index) {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.dataset.index = index;
+
+        div.innerHTML = `
+            <div class="result-icon">${result.icon || '📄'}</div>
+            <div class="result-content">
+                <div class="result-title">${result.title}</div>
+                <div class="result-subtitle">${result.subtitle || ''}</div>
+            </div>
+            ${result.shortcut ? `<div class="result-shortcut">${result.shortcut}</div>`: ''}
+            `;
+        div.addEventListener('click', () => this.executeResult(result));
+
+        return div;
+    }
 }
