@@ -18,4 +18,30 @@ class FileSearch {
         }
         this.isIndexing = false;
     }
+
+    async indexDirectory(dirPath) {
+        try {
+            const files = await window.electronAPI.readDirectory(dirPath);
+
+            for (const file of files) {
+                const fullPath = `${dirPath}/${file}`;
+                const stats = await window.electronAPI.getStats(fullPath);
+
+                if (stats.isDirectory()) {
+                    // Skip node_modules and other large directories
+                    if (!this.shouldSkipDirectory(file)) {
+                        await this.indexDirectory(fullPath);
+                    }
+                } else {
+                    this.index.push({
+                        name: file,
+                        path: fullPath,
+                        type: this.getFileType(file)
+                    });
+                }
+            }
+        } catch (error) {
+            // Skip directories we can't access
+        }
+    }
 }
