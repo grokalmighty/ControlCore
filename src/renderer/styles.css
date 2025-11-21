@@ -89,3 +89,19 @@ body {
     display: flex;
     gap: 5px;
 }
+
+.type-btn {
+    padding: 4px 8px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    color: #666;
+}
+
+.type-btn.active {
+    background: #007AFF;
+    color: white;
+    border-color: #007AFF;
+}
