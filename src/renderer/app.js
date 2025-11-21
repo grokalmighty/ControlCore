@@ -112,4 +112,24 @@ class UnifiedSearch {
 
         return div;
     }
+
+    handleKeyNavigation(e) {
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                this.navigateResults(1);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                this.navigateResults(-1);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                this.executeSelectedResult();
+                break;
+            case 'Escape':
+                window.electronAPI.hideWindow();
+                break;
+        }
+    }
 }
