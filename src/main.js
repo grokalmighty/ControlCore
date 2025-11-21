@@ -61,3 +61,12 @@ app.on('window-all-closed', function () {
 app.on('will-quit', () => {
     globalShortcut.unregisterAll();
 });
+
+// IPC handlers
+ipcMain.handle('get-user-data-path', () => {
+    return app.getPath('userData');
+});
+
+ipcMain.handle('show-error-dialog', (event, message) => {
+    dialog.showErrorBox('Error', message);
+});
