@@ -132,4 +132,12 @@ class UnifiedSearch {
                 break;
         }
     }
+
+    navigateResults(direction) {
+        const filteredResults = this.filterResults(this.currentResults);
+        if (filteredResults.length === 0) return;
+
+        this.selectedIndex = (this.selectedIndex + direction + filteredResults.length) % filteredResults.length;
+        this.updateSelection();
+    }
 }
