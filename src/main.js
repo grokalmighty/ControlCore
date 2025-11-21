@@ -26,3 +26,21 @@ function createWindow() {
         if (!isDev) mainWindow.hide();
     });
 }
+
+function registerGlobalHotKey() {
+    const ret = globalShortcut.register('CommandOrControl+Space', () => {
+        if (mainWindow) {
+            if (mainWindow.isVisible) {
+                mainWindow.hide();
+            } else {
+                mainWindow.show();
+                mainWindow.focus();
+                mainWindow.webContents.send('focus-search');
+            }
+        }
+    });
+
+    if (!ret) {
+        console.log('Global hotkey registration failed');
+    }
+}
