@@ -129,3 +129,45 @@ body {
     background-color: #007AFF;
     color: white;
 }
+
+.result-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.result-content {
+    flex: 1;
+}
+
+.result-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.result-subtitle {
+    font-size: 12px;
+    color: #666;
+    opacity: 0.8;
+}
+
+.result-item.selected .result-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.result-shortcut {
+    font-size: 11px;
+    color: #999;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.result-item.selected .result-shortcut {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8)
+}
