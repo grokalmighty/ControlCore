@@ -13,4 +13,9 @@ class FileIndexer {
             'mov', 'wav', 'zip', 'rar', '7z'
         ]);
     }
+
+    async initialize(userDataPath) {
+        this.indexPath = path.join(userDataPath, 'search-index.json');
+        await this.loadIndex();
+    }
 }
