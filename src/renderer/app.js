@@ -184,4 +184,12 @@ class UnifiedSearch {
         });
         this.displayResults();
     }
+    
+    showEmptyState() {
+        this.resultsList.innerHTML = `
+            <div class="empty-state">
+                <p>Start typing to search...<p>
+            </div>
+        `;
+    }
 }
