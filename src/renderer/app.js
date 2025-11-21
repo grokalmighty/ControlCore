@@ -86,4 +86,12 @@ class UnifiedSearch {
 
         this.updateSelection();
     }
+
+    filterResults(results) {
+        if (this.activeFilter === 'all') return results.slice(0, 10);
+
+        return results
+            .filter(result => result.type === this.activeFilter)
+            .slice(0, 10);
+    }
 }
