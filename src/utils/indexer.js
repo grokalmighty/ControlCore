@@ -114,4 +114,38 @@ class FileIndexer {
             }
         }
     }
+
+    async _indexFile(filePath, options) {
+        try {
+            const stats = await fs.stat(filePath);
+
+            // Skip files that are too large
+            if (stats.size > options.maxFileSize) return;
+
+            const extension = path.extname(filePath).toLowerCase().slice(1);
+
+            // Skip unsupported file types
+            if (!this.supportedFileTypes.has(extension) && extension !== '') {
+                return;
+            }
+
+            const fileInfo = {
+                name: path.basename(filePath),
+                path: filePath,
+                extension: extension,
+                size: stats.size,
+                modified: stats.mtime,
+                created: stats.birthtime,
+                type: this._getFileType(extension),
+                directory: path.dirname(filePath)
+            };
+
+            this.index.set(filePath, fileInfo);
+        } catch (error) {
+            // Skip files we can't access
+            if (error.code !== 'EACCES' && error.code !== 'EPERM') {
+                console.log(`Skipping file ${filePath}: ${error.message}`);
+            }
+        }
+    }
 }
