@@ -43,4 +43,28 @@ class UnifiedSearch {
         this.webSearch = new WebSearch();
         this.commands - new CustomCommands();
     }
+
+    async handleSearch(query) {
+        if (!query.trim()) {
+            this.showEmptyState();
+            return;
+        }
+
+        // Perform searches in parallel
+        const [fileResults, appResults, webResults, commandResults] = await Promise.all([
+            this.fileSearch.search(query),
+            this.appSearch.search(query),
+            this.webSearch.search(query),
+            this.commands.search(query)
+        ]);
+
+        this.currentResults = [
+            ...commandResults,
+            ...appResults,
+            ...fileResults,
+            ...webResults
+        ];
+
+        this.displayResults();
+    }
 }
