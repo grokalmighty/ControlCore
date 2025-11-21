@@ -171,3 +171,9 @@ body {
     background: rgba(255, 255, 255, 0.2);
     color: rgba(255, 255, 255, 0.8)
 }
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+}
