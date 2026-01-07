@@ -2,6 +2,7 @@ import sys
 
 from .registry import discover_scripts, list_scripts, update_manifest
 from .runner import run_script
+from .installer import install_script_from_folder
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -74,6 +75,17 @@ def main(argv=None) -> int:
 
         update_manifest(script_id, updater)
         print(f"Set {script_id} interval to {seconds}s")
+        return 0
+    
+    if cmd == "install":
+        if len(argv) < 2:
+            print("Usage: python -m control_core.cli install <folder> [--force]")
+            return 2
+
+        folder = argv[1]
+        force = "--force" in argv[2:]
+        script_id = install_script_from_folder(folder, force=force)
+        print(f"Installed {script_id}")
         return 0
     
     print(f"Unknown command: {cmd}")
