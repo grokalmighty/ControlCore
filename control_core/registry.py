@@ -17,6 +17,9 @@ class Script:
 def _load_manifest(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
+def _save_manifest(path: Path, data: dict) -> None:
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
 def discover_scripts() -> Dict[str, Script]:
     scripts: Dict[str, Script] = {}
 
