@@ -13,3 +13,28 @@ class Script:
     entrypoint: str
     schedule: dict
     path: Path
+
+def discover_scripts() -> Dict[str, Script]:
+    scripts: Dict[str, Script] = {}
+
+    for script_dir in SCRIPTS_DIR.iterdir():
+        if not script_dir.is_dir():
+            continue
+
+        manifest = script_dir / "script.json"
+        if not manifest.exists():
+            continue
+
+        data = json.loads(manifest.read_text())
+
+        s = Script(
+            id=data["id"],
+            name=data.get("name", data["id"]),
+            enabled=bool(data.get("enabled", False)),
+            entrypoint=data["entrypoint"],
+            schedule=data.get("schedule", {}),
+            path=script_dir,
+        )
+        scripts[s.id] = s
+    
+    return scripts
