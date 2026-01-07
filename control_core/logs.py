@@ -26,3 +26,21 @@ def last_run_by_script() -> Dict[str, dict]:
             continue
         last[sid] = e
     return last
+
+def tail_follow(n: int = 20, poll: float = 0.5) -> None:
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LOG_PATH.touch(exist_ok=True)
+
+    with LOG_PATH.open("r", encoding="utf-8") as f:
+        lines = f.readlines()
+        for line in lines[-n:]:
+            print(line.rstrip())
+
+        while True:
+            where = f.tell()
+            line = f.readline()
+            if not line:
+                time.sleep(poll)
+                f.seek(where)
+                continue
+            print(line.rstrip())
