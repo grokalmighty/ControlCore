@@ -57,3 +57,6 @@ def main(poll_interval: float = 0.5) -> None:
                 next_due[script_id] = now + seconds
         
         time.sleep(poll_interval)
+
+if __name__ == "__main__":
+    main()
