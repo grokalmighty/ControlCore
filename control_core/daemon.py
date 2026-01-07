@@ -60,7 +60,7 @@ def main(poll_interval: float = 0.5) -> None:
                 running.add(script_id)
                 try:
                     ok, run_id = run_script(s, timeout_seconds=20.0)
-                    print(f"[{time.strftime('%H:%M:%S')}] ran {script_id} ok={ok} run_id{run_id}")
+                    print(f"[{time.strftime('%H:%M:%S')}] ran {script_id} ok={ok} run_id={run_id}")
                     next_due[script_id] = now + seconds
                 finally:
                     running.remove(script_id)

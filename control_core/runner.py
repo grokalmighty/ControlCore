@@ -51,7 +51,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0) -> Tuple
                 **event_base,
                 "ended_at": ended,
                 "ok": ok,
-                "exit_Code": proc.returncode,
+                "exit_code": proc.returncode,
                 "stdout": proc.stdout,
                 "stderr": proc.stderr,
                 "timeout_seconds": timeout_seconds,
