@@ -1,2 +1,6 @@
+import time 
+
 def main():
-    print("Hello")
+    print("Starting sleep...")
+    time.sleep(60)
+    print("Done.")

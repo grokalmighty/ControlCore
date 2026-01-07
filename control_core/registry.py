@@ -14,6 +14,9 @@ class Script:
     schedule: dict
     path: Path
 
+def _load_manifest(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
 def discover_scripts() -> Dict[str, Script]:
     scripts: Dict[str, Script] = {}
 
