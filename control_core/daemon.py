@@ -1,8 +1,13 @@
 import time
-from typing import Dict, Set
+from pathlib import Path
+from typing import Dict, Set, Tuple
 
 from .registry import discover_scripts, Script
 from .runner import run_script
+
+def _abs_path(p: str) -> Path:
+    project_root = Path(__file__).resolve().parent.parent
+    return (project_root / p).resolve()
 
 def _initial_next_due(scripts: Dict[str, Script]) -> Dict[str, float]:
     """
@@ -31,8 +36,11 @@ def _initial_next_due(scripts: Dict[str, Script]) -> Dict[str, float]:
 def main(poll_interval: float = 0.5) -> None:
     print("Control Core daemon starting...(Ctrl+C to stop)")
 
-    scripts = discover_scripts()
-    next_due = _initial_next_due(scripts)
+    # Interval schedules: due next epoch time
+    next_due: Dict[str, float] = {}
+
+    # File watches: last seen mtime
+    last_mtime: Dict[str, float] = {}
     running: Set[str] = set()
 
     while True:
@@ -40,31 +48,95 @@ def main(poll_interval: float = 0.5) -> None:
 
         scripts = discover_scripts()
 
-        for script_id, s in scripts.items():
-            sched = s.schedule or {}
+
+        # Purge state for disabled/missing scripts
+        enabled_ids = {sid for sid, s in scripts.items() if s.enabled}
+        for sid in list(next_due.keys()):
+            if sid not in enabled_ids:
+                next_due.pop(sid, None)
+        
+        for sid in list(last_mtime.keys()):
+            if sid not in enabled_ids:
+                last_mtime.pop(sid, None)
+
+        # Initialize state for enabled scripts
+        for sid, s in scripts.items():
             if not s.enabled:
                 continue
-            if sched.get("type") != "interval":
-                continue
+        
             
-            seconds = float(sched.get("seconds", 0))
-            if seconds <= 0:
+            sched = s.schedule or {}
+            stype = sched.get("type")
+
+            if stype == "interval":
+                seconds = float(sched.get("seconds", 0))
+                if seconds > 0 and sid not in next_due:
+                    next_due[sid] = now 
+            
+            elif stype == "file_watch":
+                p = sched.get("path")
+                if not p:
+                    continue
+                watched = _abs_path(p)
+                if sid not in last_mtime:
+                    last_mtime[sid] = watched.stat().st_mtime if watched.exists() else 0.0
+        
+        # Run due scripts
+        for sid, s in scripts.items():
+            if not s.enabled:
                 continue
 
-            due = next_due.get(script_id, now)
-            if now >= due:
-                if script_id in running:
-                    next_due[script_id] = now + 1.0
+            sched = s.schedule or {}
+            stype = sched.get("type")
+
+            should_run = False 
+
+            if stype == "interval":
+                seconds = float(sched.get("seconds", 0))
+                if seconds <= 0:
                     continue
-                    
-                running.add(script_id)
+                due = next_due.get(sid)
+                if due is not None and now >= due:
+                    should_run = True
+            
+            elif stype == "file_watch":
+                p = sched.get("path")
+                if not p:
+                    continue
+                wacthed = _abs_path(p)
+                poll_seconds = float(sched.get("poll_seconds", 1.0))
+
+                # Throttle polling per script
+                due = next_due.get(sid, 0.0)
+                if now < due:
+                    continue
+                next_due[sid] = now + poll_seconds
+
+                m = watched.stat().st_mtime if watched.exists() else 0.0
+                prev = last_mtime.get(sid, 0.0)
+                if m != prev:
+                    last_mtime[sid] = m
+                    should_run = True
+            
+            else:
+                continue
+            
+            if should_run:
+                if sid in running:
+                    continue
+                running.add(sid)
+
                 try:
                     ok, run_id = run_script(s, timeout_seconds=20.0)
-                    print(f"[{time.strftime('%H:%M:%S')}] ran {script_id} ok={ok} run_id={run_id}")
-                    next_due[script_id] = now + seconds
+                    print(f"[{time.strftime('%H:%M:%S')}] ran {sid} ok={ok} run_id={run_id}")
+
+                    if stype == "interval":
+                        seconds = float(sched.get("seconds", 0))
+                        next_due=[sid] = now + seconds
+                
                 finally:
-                    running.remove(script_id)
-        
+                    running.remove(sid)
+
         time.sleep(poll_interval)
 
 if __name__ == "__main__":
