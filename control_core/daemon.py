@@ -40,3 +40,28 @@ def run_script(script_id):
 def log_event(data):
     with open("logs.jsonl", "a") as f:
         f.write(json.dumps(data) + "\n")
+
+def main():
+    policies = load_policies()
+    
+    while True:
+        for policy in policies:
+            event = policy["event"]
+
+            if event["type"] == "TIME_TRIGGER":
+                if time_matches(event["time"]):
+                    for action in policy["actions"]:
+                        if "run_script" in action:
+                            script_id = action["run_script"]
+
+                            result = run_script(script_id)
+
+                            log_event({
+                                "timestamp": datetime.datetime.utcnow().isoformat(),
+                                "policy": policy["policy_id"],
+                                "action": "RUN_SCRIPT",
+                                "script": script_id,
+                                "result": result
+                            })
+
+        time.sleep(30)
