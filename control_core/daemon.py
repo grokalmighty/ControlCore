@@ -36,3 +36,7 @@ def run_script(script_id):
         "stderr": result.stderr,
         "returncode": result.returncode
     }
+
+def log_event(data):
+    with open("logs.jsonl", "a") as f:
+        f.write(json.dumps(data) + "\n")
