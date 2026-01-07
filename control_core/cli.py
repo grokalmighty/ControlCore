@@ -33,3 +33,6 @@ def main(argv=None) -> int:
     
     print(f"Unknown command: {cmd}")
     return 2
+
+if __name__ == "__main__":
+    raise SystemExit(main())
