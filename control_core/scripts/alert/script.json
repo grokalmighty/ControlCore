@@ -1,0 +1,7 @@
+{
+    "id": "alert",
+    "name": "Alert on Failure",
+    "enabled": true,
+    "schedule": {"type": "on_failure", "target": "*"},
+    "entrypoint": "control_core.scripts.alert.main:main"
+}
