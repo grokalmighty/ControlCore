@@ -1,37 +1,16 @@
+import json
 import time
 from pathlib import Path
-from typing import Dict, Set, Tuple
+from typing import Dict, Set
 
 from .registry import discover_scripts, Script
 from .runner import run_script
 
+LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "logs.jsonl"
+
 def _abs_path(p: str) -> Path:
     project_root = Path(__file__).resolve().parent.parent
     return (project_root / p).resolve()
-
-def _initial_next_due(scripts: Dict[str, Script]) -> Dict[str, float]:
-    """
-    For each enabled interval script, store the next time it should run
-    """
-
-    now = time.time()
-    next_due: Dict[str, float] = {}
-
-    for s in scripts.values():
-        if not s.enabled:
-            continue
-
-        sched = s.schedule or {}
-        if sched.get("type") != "interval":
-            continue
-
-        seconds = float(sched.get("seconds", 0))
-        if seconds <= 0:
-            continue
-
-        next_due[s.id] = now
-
-    return next_due
 
 def main(poll_interval: float = 0.5) -> None:
     print("Control Core daemon starting...(Ctrl+C to stop)")
@@ -43,11 +22,19 @@ def main(poll_interval: float = 0.5) -> None:
     last_mtime: Dict[str, float] = {}
     running: Set[str] = set()
 
+    # Log-follow state
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LOG_PATH.touch(exist_ok=True)
+    log_pos = LOG_PATH.stat().st_size
+
     while True:
         now = time.time()
 
         scripts = discover_scripts()
 
+        # Helper to get a script by id
+        def get_script(sid: str) -> Script | None:
+            return scripts.get(sid)
 
         # Purge state for disabled/missing scripts
         enabled_ids = {sid for sid, s in scripts.items() if s.enabled}
@@ -80,7 +67,58 @@ def main(poll_interval: float = 0.5) -> None:
                 watched = _abs_path(p)
                 if sid not in last_mtime:
                     last_mtime[sid] = watched.stat().st_mtime if watched.exists() else 0.0
+
+            elif stype == "on_failure":
+                pass 
+
+        # Detect new failures and fire on_failure scripts
+        try:
+            with LOG_PATH.open("r", encoding="utf-8") as f:
+                f.seek(log_pos)
+                new = f.read()
+                log_pos = f.tell()
+        except FileNotFoundError:
+            new = ""
         
+        if new:
+            for line in new.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                if event.get("ok") is True:
+                    continue
+
+                failed_script_id = event.get("script_id")
+                if not failed_script_id:
+                    continue
+
+                # Find all enabled on_failure scripts and run those matching target
+                for sid, s in scripts.items():
+                    sched = s.schedule or {}
+                    if not s.enabled or sched.get("type") != "on_failure":
+                        continue
+
+                    target = sched.get("target", "*")
+                    if target != "*" and target != failed_script_id:
+                        continue
+
+                    # Prevent alert scripts overlapping with themselves
+                    if sid in running:
+                        continue
+
+                    running.add(sid)
+                    try:
+                        ok, run_id = run_script(s, timeout_seconds=20.0)
+                        print(f"[{time.strftime('%H:%M:%S')}] on failure -> ran {sid} ok{ok} run_id={run_id} (failure from {failed_script_id})")
+
+                    finally:
+                        running.remove(sid)
+                
         # Run due scripts
         for sid, s in scripts.items():
             if not s.enabled:
@@ -103,7 +141,7 @@ def main(poll_interval: float = 0.5) -> None:
                 p = sched.get("path")
                 if not p:
                     continue
-                wacthed = _abs_path(p)
+                watched = _abs_path(p)
                 poll_seconds = float(sched.get("poll_seconds", 1.0))
 
                 # Throttle polling per script
