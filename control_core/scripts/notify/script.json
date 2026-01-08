@@ -1,0 +1,7 @@
+{
+    "id": "notify",
+    "name": "macOS Notify on Failure",
+    "enabled": true,
+    "schedule": {"type": "on_failure", "target": "*"},
+    "entrypoint": "control_core.scripts.notify.main:main"
+}
