@@ -3,6 +3,7 @@ import subprocess
 import sys
 import time
 import traceback
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 from uuid import uuid4
@@ -16,7 +17,7 @@ def log_event(event: Dict[str, Any]) -> None:
     with LOG_PATH.open("a", encoding="utf-8") as f:
         f.write(json.dumps(event, ensure_ascii=False) + "\n")
 
-def run_script(script: Script, timeout_seconds: Optional[float] = 30.0) -> Tuple[bool, str]:
+def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload: Optional[dict] = None) -> Tuple[bool, str]:
     """
     Run script.entrypoint in a separate Python process.
     Captures stdout/stderr and logs structured results.
@@ -33,8 +34,16 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0) -> Tuple
     }
 
     # Launch: python -c "import module; module.func()"
+    payload_json = json.dumps(payload or {}, ensure_ascii=False)
+
     module_path, func_name = script.entrypoint.split(":")
-    code = f"import {module_path} as m; getattr(m, '{func_name}')()"
+    code = (
+        "import os, json, importlib; "
+        f"m=importlib.import_module('{module_path}'); "
+        "payload=json.loads(os.environ.get('CONTROL_CORE_PAYLOAD','{}')); "
+        f"fn=getattr(m, '{func_name}'); "
+        "fn(payload) if fn.__code__.co_argcount >= 1 else fn() "
+    )
 
     try:
         proc = subprocess.run(
@@ -42,6 +51,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0) -> Tuple
             capture_output=True,
             text=True,
             timeout=timeout_seconds,
+            env={**os.environ, "CONTROL_CORE_PAYLOAD": payload_json},
         )
         ended = time.time()
 

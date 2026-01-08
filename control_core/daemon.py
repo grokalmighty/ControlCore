@@ -32,10 +32,6 @@ def main(poll_interval: float = 0.5) -> None:
 
         scripts = discover_scripts()
 
-        # Helper to get a script by id
-        def get_script(sid: str) -> Script | None:
-            return scripts.get(sid)
-
         # Purge state for disabled/missing scripts
         enabled_ids = {sid for sid, s in scripts.items() if s.enabled}
         for sid in list(next_due.keys()):
@@ -113,8 +109,8 @@ def main(poll_interval: float = 0.5) -> None:
 
                     running.add(sid)
                     try:
-                        ok, run_id = run_script(s, timeout_seconds=20.0)
-                        print(f"[{time.strftime('%H:%M:%S')}] on failure -> ran {sid} ok{ok} run_id={run_id} (failure from {failed_script_id})")
+                        ok, run_id = run_script(s, timeout_seconds=20.0, payload={"failed_event": event})
+                        print(f"[{time.strftime('%H:%M:%S')}] on failure -> ran {sid} ok={ok} run_id={run_id} (failure from {failed_script_id})")
 
                     finally:
                         running.remove(sid)
@@ -166,7 +162,7 @@ def main(poll_interval: float = 0.5) -> None:
 
                 try:
                     ok, run_id = run_script(s, timeout_seconds=20.0)
-                    print(f"[{time.strftime('%H:%M:%S')}] ran {sid} ok={ok} run_id={run_id}")
+                    print(f"[{time.strftime('%H:%M:%S')}] ran {sid} ok={ok} run_id={run_id})")
 
                     if stype == "interval":
                         seconds = float(sched.get("seconds", 0))
@@ -181,4 +177,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nDameon stopped.")
+        print("\nDaemon stopped.")
