@@ -93,6 +93,10 @@ def main(poll_interval: float = 0.5) -> None:
                 if not failed_script_id:
                     continue
 
+                # Prevent recursive failure scripts
+                if failed_script_id == sid:
+                    continue
+
                 # Find all enabled on_failure scripts and run those matching target
                 for sid, s in scripts.items():
                     sched = s.schedule or {}
