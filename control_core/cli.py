@@ -87,7 +87,14 @@ def main(argv=None) -> int:
 
         folder = argv[1]
         force = "--force" in argv[2:]
-        script_id = install_script_from_folder(folder, force=force)
+
+        try:
+            script_id = install_script_from_folder(folder, force=force)
+        
+        except Exception as e:
+            print(f"Install failed: {e}")
+            return 1
+        
         print(f"Installed {script_id}")
         return 0
 

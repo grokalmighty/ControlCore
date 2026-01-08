@@ -6,7 +6,7 @@ from .registry import SCRIPTS_DIR
 from .validator import validate_script_folder
 
 def install_script_from_folder(source_folder: str, force: bool = False) -> str:
-    src = Path(source_folder).resolve()
+    src = Path(source_folder).expanduser().resolve()
     if not src.exists() or not src.is_dir():
         raise FileNotFoundError(f"Source folder not found: {src}")
     
