@@ -191,6 +191,9 @@ def build_report_minutes(minutes: int = 60, script_id: str | None = None, fails_
 def format_report(rep: dict) -> str:
     lines: List[str] = []
     header = rep.get("window")
+    if not rep["rows"]:
+        lines.append("No failures in this window.")
+        return "\n".join(lines)
     if header:
         lines.append(f"Report ({header}, {rep.get('event_count', 0)} events)")
     else:
