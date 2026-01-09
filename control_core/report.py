@@ -53,7 +53,7 @@ def _err_line(e: dict) -> str:
     lines = [ln.rstrip() for ln in text.splitlines() if ln.strip()]
     return lines[-1] if lines else ""
 
-def build_report(last_n: int = 200) -> dict:
+def build_report(last_n: int = 200, script_id: str | None = None) -> dict:
     recent = deque(maxlen=last_n)
     for e in _iter_events():
         recent.append(e)
@@ -71,6 +71,10 @@ def build_report(last_n: int = 200) -> dict:
 
     for e in recent:
         sid = e.get("script_id")
+
+        if script_id and sid != script_id:
+            continue
+
         if not sid:
             continue
 
@@ -104,9 +108,13 @@ def build_report(last_n: int = 200) -> dict:
     slowest.sort(reverse=True)
     slowest = slowest[:10]
 
-    return {"rows": rows, "slowest": slowest, "last_n": last_n}
+    window = f"last {last_n} events"
 
-def build_report_minutes(minutes: int = 60) -> dict:
+    if script_id:
+        window = f"{window}, script={script_id}"
+    return {"rows": rows, "slowest": slowest, "window": window, "last_n": last_n}
+
+def build_report_minutes(minutes: int = 60, script_id: str | None = None) -> dict:
     since = time.time() - (minutes * 60)
     per = defaultdict(lambda: {
         "runs": 0, "fails": 0, "dur_sum": 0.0, "dur_n": 0, "last_fail_time": None, "last_fail_line": "",
@@ -117,6 +125,10 @@ def build_report_minutes(minutes: int = 60) -> dict:
     for e in _iter_events_since(since):
         count += 1
         sid = e.get("script_id")
+        
+        if script_id and sid != script_id:
+            continue 
+
         if not sid:
             continue
         d = per[sid]
@@ -148,7 +160,10 @@ def build_report_minutes(minutes: int = 60) -> dict:
     slowest.sort(reverse=True)
     slowest = slowest[:10]
 
-    return {"rows": rows, "slowest": slowest, "window": f"last {minutes} minutes", "event_count": count}
+    window = f"last {minutes} minutes"
+    if script_id:
+        window = f"{window}, script={script_id}"
+    return {"rows": rows, "slowest": slowest, "window": window, "event_count": count}
 
 def format_report(rep: dict) -> str:
     lines: List[str] = []
