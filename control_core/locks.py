@@ -7,3 +7,8 @@ import fcntl
 from dataclasses import dataclass
 from typing import Optional
 
+@dataclass
+class LockResult:
+    acquired: bool
+    wait_seconds: float
+    path: str
