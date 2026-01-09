@@ -155,6 +155,25 @@ def main(argv=None) -> int:
         print(f"Stale pid file: pid={pid} not running (pid file: {PID_PATH})")
         return 1
     
+    if cmd == "stop-daemon":
+        pid = read_pid()
+        if pid is None:
+            print(f"Daemon not running (no pid file at {PID_PATH})")
+            return 1
+        if not pid_is_running(pid):
+            print(f"Stale pid file: pid={pid} not running (pid file: {PID_PATH})")
+            from .daemon_state import clear_pid
+            clear_pid()
+            return 1
+        try:
+            from .daemon_state import stop_pid
+            stop_pid(pid)
+            print(f"Sent SIGTERM to daemon pid={pid}")
+            return 0
+        except Exception as e:
+            print(f"Failed to stop daemon: {e}")
+            return 1
+    
     print(f"Unknown command: {cmd}")
     return 2
 
