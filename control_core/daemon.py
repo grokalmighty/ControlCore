@@ -1,5 +1,6 @@
 import json
 import time
+import signal
 from pathlib import Path
 from typing import Dict, Set
 
@@ -16,6 +17,14 @@ def _abs_path(p: str) -> Path:
 def main(poll_interval: float = 0.5) -> None:
     print("Control Core daemon starting...(Ctrl+C to stop)")
     write_pid()
+
+    stop_flag = {"stop": False}
+
+    def _handle_term(signum, frame):
+        stop_flag["stop"] = True
+
+    signal.signal(signal.SIGTERM, _handle_term)
+
     # Interval schedules: due next epoch time
     next_due: Dict[str, float] = {}
 
@@ -28,7 +37,7 @@ def main(poll_interval: float = 0.5) -> None:
     LOG_PATH.touch(exist_ok=True)
     log_pos = LOG_PATH.stat().st_size
 
-    while True:
+    while not stop_flag["stop"]:
         now = time.time()
 
         scripts = discover_scripts()
@@ -181,6 +190,7 @@ def main(poll_interval: float = 0.5) -> None:
 if __name__ == "__main__":
     try:
         main()
+        print("SIGTERM received, shutting down...")
     except KeyboardInterrupt:
         print("\nDaemon stopped.")
     finally:
