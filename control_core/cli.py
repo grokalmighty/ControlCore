@@ -147,7 +147,7 @@ def main(argv=None) -> int:
     if cmd == "daemon-status":
         pid = read_pid()
         if pid is None:
-            print("Daemon not running (no pid file at {PID_PATH})")
+            print(f"Daemon not running (no pid file at {PID_PATH})")
             return 1
         if pid_is_running(pid):
             print(f"Daemon is running with pid {pid} (pid file: {PID_PATH})")
