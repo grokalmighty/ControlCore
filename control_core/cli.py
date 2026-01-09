@@ -11,6 +11,7 @@ from .stats import compute_stats
 from .history import get_history, format_event
 from .log_rotate import rotate_logs
 from .exporter import export_csv
+from .report import build_report, format_report
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -254,6 +255,19 @@ def main(argv=None) -> int:
         
         path = export_csv(out, max_rows=max_rows)
         print(f"Exported to {path}")
+        return 0
+
+    if cmd == "report":
+        n = 200
+        if len(argv) >= 2:
+            try:
+                n = int(argv[1])
+            except ValueError:
+                print("Usage: python -m control_core.cli report [n]")
+                return 2
+        
+        rep = build_report(last_n=n)
+        print(format_report(rep))
         return 0
         
     print(f"Unknown command: {cmd}")

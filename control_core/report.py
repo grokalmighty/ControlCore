@@ -31,8 +31,11 @@ def _err_line(e: dict) -> str:
     text = (e.get("error") or e.get("stderr") or "").strip()
     if not text:
         return ""
-    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-    return lines[-1] if lines else ""
+    lines = [ln.rstrip() for ln in text.splitlines() if ln.strip()]
+    if lines:
+        return lines[-1].strip()
+    
+    return ""
 
 def build_report(last_n: int = 200) -> dict:
     recent = deque(maxlen=last_n)
@@ -98,7 +101,11 @@ def format_report(rep: dict) -> str:
         avg_ms_s = f"{avg_ms:.1f}" if isinstance(avg_ms, (int, float)) else "-"
         if isinstance(last_fail_time, (int, float)):
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(last_fail_time))
-            last_fail_s = f"{t} {last_fail_line}"
+            msg = (last_fail_line or "").strip()
+            if msg:
+                last_fail_s = f"{t} | {msg}"
+            else:
+                last_fail_s = t
         else:
             last_fail_s = "-"
         lines.append(f"{sid:10} {runs:5d} {fails:5d} {fail_pct:6.1f} {avg_ms_s:>8} {last_fail_s}")
