@@ -86,3 +86,27 @@ def build_report(last_n: int = 200) -> dict:
     slowest = slowest[:10]
 
     return {"rows": rows, "slowest": slowest, "last_n": last_n}
+
+def format_report(rep: dict) -> str:
+    lines: List[str] = []
+    last_n = rep["last_n"]
+    lines.append(f"Report (last {last_n} events)")
+    lines.append("")
+    lines.append("Top failure rates:")
+    lines.append(f"{'script':10} {'runs':>5} {'fails':>5} {'fail':>6} {'avg_ms':>8} last_failure")
+    for fail_pct, fails, sid, runs, avg_ms, last_fail_time, last_fail_line in rep["rows"][:10]:
+        avg_ms_s = f"{avg_ms:.1f}" if isinstance(avg_ms, (int, float)) else "-"
+        if isinstance(last_fail_time, (int, float)):
+            t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(last_fail_time))
+            last_fail_s = f"{t} {last_fail_line}"
+        else:
+            last_fail_s = "-"
+        lines.append(f"{sid:10} {runs:5d} {fails:5d} {fail_pct:6.1f} {avg_ms_s:>8} {last_fail_s}")
+    
+    lines.append("")
+    lines.append("Slowest runs:")
+    lines.append(f"{'ms':>8} {'script':10} run_id")
+    for ms, sid, run_id, in rep["slowest"]:
+        lines.append(f"{ms:8.1f} {sid:10} {run_id}")
+    
+    return "\n".join(lines)
