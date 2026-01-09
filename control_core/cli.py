@@ -258,6 +258,16 @@ def main(argv=None) -> int:
         return 0
 
     if cmd == "report":
+        # Script filter
+        script_id = None
+        if "--script" in argv:
+            j = argv.index("--script")
+            if j + 1 >= len(argv):
+                print("Usage: python -m control_core.cli report [n] [--script <id>] OR report --minutes <N> [--script <id>]")
+                return 2
+            script_id = argv[j + 1]
+
+        # Minutes 
         if "--minutes" in argv:
             i = argv.index("--minutes")
             if i + 1 >= len(argv):
@@ -269,10 +279,11 @@ def main(argv=None) -> int:
                 print("minutes must be an integer")
                 return 2
             from .report import build_report_minutes, format_report
-            rep = build_report_minutes(minutes=minutes)
+            rep = build_report_minutes(minutes=minutes, script_id=script_id)
             print(format_report(rep))
             return 0
         
+        # Default last-n
         n = 200
         if len(argv) >= 2:
             try:
@@ -282,7 +293,7 @@ def main(argv=None) -> int:
                 return 2
         
         from .report import build_report, format_report
-        rep = build_report(last_n=n)
+        rep = build_report(last_n=n, script_id=script_id)
         print(format_report(rep))
         return 0
         

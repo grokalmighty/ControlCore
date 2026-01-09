@@ -72,10 +72,10 @@ def build_report(last_n: int = 200, script_id: str | None = None) -> dict:
     for e in recent:
         sid = e.get("script_id")
 
-        if script_id and sid != script_id:
+        if not sid:
             continue
 
-        if not sid:
+        if script_id and sid != script_id:
             continue
 
         d = per[sid]
@@ -112,7 +112,7 @@ def build_report(last_n: int = 200, script_id: str | None = None) -> dict:
 
     if script_id:
         window = f"{window}, script={script_id}"
-    return {"rows": rows, "slowest": slowest, "window": window, "last_n": last_n}
+    return {"rows": rows, "slowest": slowest, "window": window, "last_n": last_n, "event_count": len(recent)}
 
 def build_report_minutes(minutes: int = 60, script_id: str | None = None) -> dict:
     since = time.time() - (minutes * 60)
@@ -125,12 +125,13 @@ def build_report_minutes(minutes: int = 60, script_id: str | None = None) -> dic
     for e in _iter_events_since(since):
         count += 1
         sid = e.get("script_id")
-        
-        if script_id and sid != script_id:
-            continue 
 
         if not sid:
             continue
+    
+        if script_id and sid != script_id:
+            continue 
+
         d = per[sid]
         d["runs"] += 1
 
@@ -148,6 +149,10 @@ def build_report_minutes(minutes: int = 60, script_id: str | None = None) -> dic
                 d["last_fail_time"] = t
             d["last_fail_line"] = _err_line(e)
     
+    if script_id:
+        per = {k: v for k, v in per.items() if k == script_id}
+        slowest = [t for t in slowest if t[1] == script_id]
+        
     rows = []
     for sid, d in per.items():
         runs = d["runs"]
