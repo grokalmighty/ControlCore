@@ -260,7 +260,7 @@ def main(argv=None) -> int:
     if cmd == "report":
 
         fails_only = "--fails-only" in argv 
-        
+
         # Script filter
         script_id = None
         if "--script" in argv:
@@ -299,7 +299,30 @@ def main(argv=None) -> int:
         rep = build_report(last_n=n, script_id=script_id, fails_only=fails_only)
         print(format_report(rep))
         return 0
+
+    if cmd == "trigger":
+        if len(argv) < 2:
+            print("Usage: python -m control_core.cli trigger <script_id>")
+            return 2
         
+        script_id = argv[1]
+
+        from .registry import discover_scripts
+        from .runner import run_script
+
+        scripts = discover_scripts()
+        s = scripts.get(script_id)
+        if not s:
+            print(f"Unkown script_id: {script_id}")
+            return 1
+        if not s.enabled:
+            print(f"Script is disabled: {script_id}")
+            return 1
+
+        ok, run_id = run_script(s, timeout_seconds=20.0, payload={"trigger": True})
+        print(f"Triggered {script_id} ok={ok} run_id={run_id}")
+        return 0
+            
     print(f"Unknown command: {cmd}")
     return 2
 
