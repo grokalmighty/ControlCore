@@ -10,6 +10,7 @@ from .daemon_state import read_pid, pid_is_running, PID_PATH
 from .stats import compute_stats
 from .history import get_history, format_event
 from .log_rotate import rotate_logs
+from .exporter import export_csv
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -236,6 +237,23 @@ def main(argv=None) -> int:
             print("No rotation needed (logs empty).")
         else:
             print(f"Rotated logs to {archived}")
+        return 0
+
+    if cmd == "export":
+        if len(argv) < 2:
+            print("Usage: python -m control_core.cli export <output.csv> [max_rows]")
+            return 2
+        out = argv[1]
+        max_rows = None
+        if len(argv) >= 3:
+            try:
+                max_rows = int(argv[2])
+            except ValueError:
+                print("max_rows must be an integer")
+                return 2
+        
+        path = export_csv(out, max_rows=max_rows)
+        print(f"Exported to {path}")
         return 0
         
     print(f"Unknown command: {cmd}")
