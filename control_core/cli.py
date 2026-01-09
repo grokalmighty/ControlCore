@@ -9,6 +9,7 @@ from .validator import validate_script_folder
 from .daemon_state import read_pid, pid_is_running, PID_PATH
 from .stats import compute_stats
 from .history import get_history, format_event
+from .log_rotate import rotate_logs
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -227,6 +228,14 @@ def main(argv=None) -> int:
         print(f"History for {script_id} (last {len(events)} runs):")
         for e in events:
             print(" - " + format_event(e))
+        return 0
+    
+    if cmd == "rotate-logs":
+        archived = rotate_logs()
+        if archived.name == "logs.jsonl":
+            print("No rotation needed (logs empty).")
+        else:
+            print(f"Rotated logs to {archived}")
         return 0
         
     print(f"Unknown command: {cmd}")
