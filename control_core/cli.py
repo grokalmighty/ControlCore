@@ -6,6 +6,7 @@ from .runner import run_script
 from .installer import install_script_from_folder
 from .logs import last_run_by_script, tail_follow
 from .validator import validate_script_folder
+from .daemon_state import read_pid, pid_is_running, PID_PATH
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -141,6 +142,17 @@ def main(argv=None) -> int:
         print("NOT OK:")
         for e in errs:
             print(f" - {e}")
+        return 1
+    
+    if cmd == "daemon-status":
+        pid = read_pid()
+        if pid is None:
+            print("Daemon not running (no pid file at {PID_PATH})")
+            return 1
+        if pid_is_running(pid):
+            print(f"Daemon is running with pid {pid} (pid file: {PID_PATH})")
+            return 0
+        print(f"Stale pid file: pid={pid} not running (pid file: {PID_PATH})")
         return 1
     
     print(f"Unknown command: {cmd}")
