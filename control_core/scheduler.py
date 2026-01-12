@@ -84,4 +84,18 @@ def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool,
     return False None
 
 def mark_fired(script: Script, state: Dict[str, Any], fired_at: float) -> None:
-    state.setdefault(script.id, {})["last_fired_at"] = fired_at
+    sched = getattr(script, "schedule", None) or {}
+    stype = sched.get("type")
+
+    if stype == "interval":
+        state.setdefault(script.id, {})["last_fired_at"] = fired_at
+        return
+    
+    if stype == "time":
+        tzname = sched.get("tz") or "America/New_York"
+        try:
+            tz = ZoneInfo(tzname)
+        except Exception:
+            tz = ZoneInfo("America/New_York")
+        state.setdefault(script.id, {})["last_fired_at"] = _today_key(fired_at, tz)
+        return 
