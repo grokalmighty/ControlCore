@@ -28,6 +28,11 @@ def _parse_hhmm(s: str) -> Optional[tuple[int, int]]:
         return hh, mm
     except Exception:
         return None
+
+def _today_key(now_ts: float, tz: ZoneInfo) -> str:
+    dt = datetime.fromttimestamp(now_ts, tz=tz)
+    return dt.strftime("%Y-%m-%d")
+
 def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool, Optional[float]]:
     """
     Returns (is_due, seconds_interval)
