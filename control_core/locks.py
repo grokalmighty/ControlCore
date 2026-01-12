@@ -55,3 +55,10 @@ def acquire_file_lock(
                 return LockResult(acquired=False, wait_seconds=waited, path=path), None
             
             time.sleep(poll_interval)
+
+def release_file_lock(fd: int) -> None:
+    # Releasing: Unlock + close 
+    try:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
