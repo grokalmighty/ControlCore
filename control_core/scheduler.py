@@ -81,7 +81,7 @@ def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool,
         
         return False, None
     
-    return False None
+    return False, None
 
 def mark_fired(script: Script, state: Dict[str, Any], fired_at: float) -> None:
     sched = getattr(script, "schedule", None) or {}
