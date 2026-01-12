@@ -137,7 +137,7 @@ def main(poll_interval: float = 0.5) -> int:
                 sched = s.schedule or {}
                 stype = sched.get("type")
 
-                if stype == "interval":
+                if stype in ("interval", "time"):
                     is_due, interval = due_to_run(s, sched_state, now)
                     if not is_due:
                         continue
