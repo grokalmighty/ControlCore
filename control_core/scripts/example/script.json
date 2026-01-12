@@ -1,7 +1,7 @@
 {
   "id": "example",
   "name": "Example Script",
-  "enabled": true,
+  "enabled": false,
   "schedule": {
     "type": "interval",
     "seconds": 3.0

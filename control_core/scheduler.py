@@ -1,5 +1,8 @@
 import time
+from datetime import datetime
 from typing import Dict, Any, Optional, Tuple
+
+from zoneinfo import ZoneInfo
 
 from .registry import Script
 
@@ -13,6 +16,18 @@ def get_interval_seconds(script: Script) -> Optional[float]:
         return None
     return seconds if seconds > 0 else None
 
+def _parse_hhmm(s: str) -> Optional[tuple[int, int]]:
+    try:
+        parts = s.strip().split(":")
+        if len(parts) != 2:
+            return None
+        hh = int(parts[0])
+        mm = int(parts[1])
+        if not(0 <= jj <= 23 and 0 <= mm <= 59):
+            return None
+        return hh, mm
+    except Exception:
+        return None
 def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool, Optional[float]]:
     """
     Returns (is_due, seconds_interval)
