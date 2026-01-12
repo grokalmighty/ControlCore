@@ -25,3 +25,18 @@ def get_idle_seconds_macos() -> Optional[float]:
         return None
     except Exception:
         return None
+
+def list_process_names() -> Set[str]:
+    try:
+        out = subprocess.check_output(["ps", "-axo", "comm="], text=True)
+        names: Set[str] = set()
+        for line in out.splitlines():
+            name = line.strip()
+            if not name:
+                continue
+            
+            name = name.split("/")[-1]
+            names.add(name)
+        return names
+    except Exception:
+        return set()
