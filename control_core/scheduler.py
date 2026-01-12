@@ -69,6 +69,15 @@ def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool,
             tz = ZoneInfo("America/New_York")
         
         now_dt = datetime.fromtimestamp(now, tz=tz)
+        days = sched.get("days")
+        if isinstance(days, list) and days:
+            try:
+                iso = now_dt.isoweekday()
+                allowed = {int(d) for d in days}
+                if iso not in allowed:
+                    return False, None
+            except Exception: 
+                pass
         today_key = now_dt.strftime("%Y-%m-%d")
 
         last_day = state.get(script.id, {}).get("last_fired_day")
