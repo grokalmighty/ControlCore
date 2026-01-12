@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Tuple
 from uuid import uuid4
 
 from .registry import Script
+from .daemon_state import LOCKS_DIR
+from .locks import acquire_file_lock, release_file_lock
 
 LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "logs.jsonl"
 
@@ -33,6 +35,41 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
         "started_at": started,
     }
 
+    # Lock
+    lock_group = (getattr(script, "lock_group", None) or script.id)
+    lock_mode = (getattr(script, "lock_mode", "skip") or "skip")
+    lock_timeout_seconds = float(getattr(script, "lock_timeout_seconds", 0.0) or 0.0)
+
+    if lock_mode == "skip":
+        lock_timeout_seconds = 0.0
+
+    LOCKS_DIR.mkdir(parents=True, exist_ok=True)
+    lock_result, lock_fd = acquire_file_lock(
+        lock_dir=str(LOCKS_DIR),
+        group=lock_group,
+        timeout_seconds=lock_timeout_seconds,
+    )
+
+    if not lock_result.acquired:
+        ended = time.time()
+        log_event({
+            **event_base,
+            "ended_at": ended,
+            "ok": False,
+            "exit_code": None,
+            "stdout": "",
+            "stderr": "",
+            "error": f"Skipped: lock_group '{lock_group}' is busy",
+            "timeout_seconds": timeout_seconds,
+
+            # Lock metadata
+            "lock_group": lock_group,
+            "lock_mode": lock_mode,
+            "lock_acquired": False,
+            "lock_wait_seconds": lock_result.wait_seconds,
+            "skipped_due_to_lock": True,
+        })
+        return False, run_id
     # Launch: python -c "import module; module.func()"
     payload_json = json.dumps(payload or {}, ensure_ascii=False)
 
@@ -67,6 +104,12 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
                 "stderr": proc.stderr,
                 'error': error,
                 "timeout_seconds": timeout_seconds,
+
+                # Lock metadata
+                "lock_group": lock_group,
+                "lock_mode": lock_mode,
+                "lock_acquired": True,
+                "lock_wait_seconds": lock_result.wait_seconds,
             }
         )
         return ok, run_id
@@ -83,6 +126,12 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
                 "stderr": e.stderr if isinstance(e.stderr, str) else "",
                 "timeout": True,
                 "timeout_seconds": timeout_seconds,
+
+                # Lock metadata
+                "lock_group": lock_group,
+                "lock_mode": lock_mode,
+                "lock_acquired": True,
+                "lock_wait_seconds": lock_result.wait_seconds,
             }
         )
         return False, run_id
@@ -90,5 +139,20 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
     except Exception:
         ended = time.time()
         tb = traceback.format_exc()
-        log_event({**event_base, "ended_at": ended, "ok": False, "error": tb})
+        log_event({
+            **event_base, 
+                "ended_at": ended, 
+                "ok": False, 
+                "error": tb,
+                
+                # Lock metadata
+                "lock_group": lock_group,
+                "lock_mode": lock_mode,
+                "lock_acquired": True,
+                "lock_wait_seconds": lock_result.wait_seconds,
+            })
         return False, run_id
+    
+    finally:
+        if lock_fd is not None:
+            release_file_lock(lock_fd)
