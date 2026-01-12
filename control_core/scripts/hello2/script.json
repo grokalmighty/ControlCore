@@ -3,8 +3,9 @@
   "name": "Hello2",
   "enabled": true,
   "schedule": {
-    "type": "interval",
-    "seconds": 10.0
+    "type": "time",
+    "at": "15:09",
+    "tz": "America/New_York"
   },
   "entrypoint": "control_core.scripts.hello2.main:main",
   "lock_mode": "skip",

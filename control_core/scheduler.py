@@ -23,14 +23,14 @@ def _parse_hhmm(s: str) -> Optional[tuple[int, int]]:
             return None
         hh = int(parts[0])
         mm = int(parts[1])
-        if not(0 <= jj <= 23 and 0 <= mm <= 59):
+        if not(0 <= hh <= 23 and 0 <= mm <= 59):
             return None
         return hh, mm
     except Exception:
         return None
 
 def _today_key(now_ts: float, tz: ZoneInfo) -> str:
-    dt = datetime.fromttimestamp(now_ts, tz=tz)
+    dt = datetime.fromtimestamp(now_ts, tz=tz)
     return dt.strftime("%Y-%m-%d")
 
 def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool, Optional[float]]:
@@ -97,5 +97,5 @@ def mark_fired(script: Script, state: Dict[str, Any], fired_at: float) -> None:
             tz = ZoneInfo(tzname)
         except Exception:
             tz = ZoneInfo("America/New_York")
-        state.setdefault(script.id, {})["last_fired_at"] = _today_key(fired_at, tz)
+        state.setdefault(script.id, {})["last_fired_day"] = _today_key(fired_at, tz)
         return 

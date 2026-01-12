@@ -88,6 +88,29 @@ def main(argv=None) -> int:
         update_manifest(script_id, updater)
         print(f"Set {script_id} interval to {seconds}s")
         return 0
+
+    if cmd == "set-time":
+        if len(argv) < 3:
+            print("Usage: python -m control_core.cli set-time <id> <HH:MM> [--tz <IANA_TZ>]")
+            return 2
+        
+        script_id = argv[1]
+        at = argv[2]
+
+        tz = "America/New_York"
+        if "--tz" in argv:
+            i = argv.index("--tz")
+            if i + 1 >= len(argv):
+                print("Missing value after --tz")
+                return 2
+            tz = argv[i + 1]
+        
+        def updater(m):
+            m["schedule"] = {"type": "time", "at": at, "tz": tz}
+
+        update_manifest(script_id, updater)
+        print(f"Set {script_id} daily time to {at} ({tz})")
+        return 0
     
     if cmd == "install":
         if len(argv) < 2:

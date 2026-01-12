@@ -164,7 +164,7 @@ def main(poll_interval: float = 0.5) -> int:
                     if not p:
                         continue
                     watched = _abs_path(p)
-                    poll_seconds = float(sched.get("poll_seconds", 1.0))
+                    poll_seconds = float(sched.get("poll_seconds", 1.0) or 1.0)
 
                     # Throttle polling per script
                     due = next_poll.get(sid, 0.0)
