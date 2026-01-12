@@ -14,7 +14,7 @@ class LockResult:
     path: str
 
 def _sanitize_group(group: str) -> str:
-    safe = "".join(ch if ch.isanum() or ch in ("-", "_", ".") else "_" for ch in group.strip())
+    safe = "".join(ch if ch.isalnum() or ch in ("-", "_", ".") else "_" for ch in group.strip())
     return safe or "default"
 
 def acquire_file_lock(
@@ -50,7 +50,7 @@ def acquire_file_lock(
                 raise
 
             waited = time.time() - start
-            if waited >- timeout_seconds:
+            if waited >= timeout_seconds:
                 os.close(fd)
                 return LockResult(acquired=False, wait_seconds=waited, path=path), None
             

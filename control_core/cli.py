@@ -6,12 +6,13 @@ from .runner import run_script
 from .installer import install_script_from_folder
 from .logs import last_run_by_script, tail_follow
 from .validator import validate_script_folder
-from .daemon_state import read_pid, pid_is_running, PID_PATH
+from .daemon_state import read_pid, pid_is_running, PID_PATH, LOCKS_DIR
 from .stats import compute_stats
 from .history import get_history, format_event
 from .log_rotate import rotate_logs
 from .exporter import export_csv
 from .report import build_report, format_report
+from .locks import acquire_file_lock, release_file_lock
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -206,7 +207,7 @@ def main(argv=None) -> int:
             last_ok = d["last_ok"]
             rid = d["last_run_id"] or ""
             print(f"{sid:10} {runs:5} {fails:5} {fail_pct:6.1f}% {avg_ms:8.1f} {str(last_ok):>7} {rid}")
-            return 0
+        return 0
     
     if cmd == "history":
         if len(argv) < 2:
@@ -352,6 +353,26 @@ def main(argv=None) -> int:
 
         ok, run_id = run_script(s, timeout_seconds=timeout, payload=payload)
         print(f"Triggered {script_id} ok={ok} run_id={run_id}")
+        return 0
+    
+    if cmd == "locks":
+        LOCKS_DIR.mkdir(parents=True, exist_ok=True)
+
+        lock_files = sorted(LOCKS_DIR.glob("*.lock"))
+        if not lock_files:
+            print(f"No lock files in {LOCKS_DIR}")
+            return 0
+        
+        print(f"Locks in {LOCKS_DIR}:")
+        for p in lock_files:
+            group = p.stem
+            res, fd = acquire_file_lock(str(LOCKS_DIR), group, timeout_seconds=0.0)
+            if res.acquired and fd is not None:
+                release_file_lock(fd)
+                status = "FREE"
+            else:
+                status = "BUSY"
+            print(f" - {group:20} {status}")
         return 0
             
     print(f"Unknown command: {cmd}")

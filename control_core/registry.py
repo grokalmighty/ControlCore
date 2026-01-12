@@ -16,7 +16,7 @@ class Script:
 
     # Locking
     lock_group: str | None = None
-    lock_mode = str = "skip"
+    lock_mode: str = "skip"
     lock_timeout_seconds: float = 0.0
 
 def _load_manifest(path: Path) -> dict:
@@ -41,7 +41,11 @@ def discover_scripts() -> Dict[str, Script]:
         # Backward compatible
         lock_group = data.get("lock_group", data.get("lock"))
         lock_mode = data.get("lock_mode", "skip")
+        if lock_mode not in ("skip", "wait"):
+            lock_mode = "skip"
         lock_timeout_seconds = float(data.get("lock_timeout_seconds", 0.0) or 0.0)
+        if lock_timeout_seconds < 0:
+            lock_timeout_seconds = 0.0
 
         s = Script(
             id=data["id"],

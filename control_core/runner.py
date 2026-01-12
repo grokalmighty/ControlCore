@@ -36,7 +36,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
     }
 
     # Lock
-    lock_group = (getattr(script, "lock_group", None) or script.id)
+    lock_group = (getattr(script, "lock_group", None) or script.id or "default")
     lock_mode = (getattr(script, "lock_mode", "skip") or "skip")
     lock_timeout_seconds = float(getattr(script, "lock_timeout_seconds", 0.0) or 0.0)
 
@@ -68,6 +68,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
             "lock_acquired": False,
             "lock_wait_seconds": lock_result.wait_seconds,
             "skipped_due_to_lock": True,
+            "lock_path": lock_result.path
         })
         return False, run_id
     # Launch: python -c "import module; module.func()"
@@ -110,6 +111,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
                 "lock_mode": lock_mode,
                 "lock_acquired": True,
                 "lock_wait_seconds": lock_result.wait_seconds,
+                "lock_path": lock_result.path
             }
         )
         return ok, run_id
@@ -132,6 +134,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
                 "lock_mode": lock_mode,
                 "lock_acquired": True,
                 "lock_wait_seconds": lock_result.wait_seconds,
+                "lock_path": lock_result.path
             }
         )
         return False, run_id
@@ -150,6 +153,7 @@ def run_script(script: Script, timeout_seconds: Optional[float] = 30.0, payload:
                 "lock_mode": lock_mode,
                 "lock_acquired": True,
                 "lock_wait_seconds": lock_result.wait_seconds,
+                "lock_path": lock_result.path
             })
         return False, run_id
     

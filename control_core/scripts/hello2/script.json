@@ -3,5 +3,7 @@
     "name": "Hello2",
     "enabled": true,
     "schedule": {"type": "interval", "seconds": 5},
-    "entrypoint": "control_core.scripts.hello2.main:main"
+    "entrypoint": "control_core.scripts.hello2.main:main",
+    "lock_mode": "skip",
+    "lock_timeout_seconds": 0
 }
