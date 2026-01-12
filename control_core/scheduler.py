@@ -12,3 +12,20 @@ def get_interval_seconds(script: Script) -> Optional[float]:
     except Exception:
         return None
     return seconds if seconds > 0 else None
+
+def due_to_run(script: Script, state: Dict[str, Any], now: float) -> Tuple[bool, Optional[float]]:
+    """
+    Returns (is_due, seconds_interval)
+    """
+
+    interval = get_interval_seconds(script)
+    if interval is None:
+        return False, None
+    
+    sid = script.id
+    last = state.get(sid, {}).get("last_fired_at")
+
+    if not isinstance(last, (int, float)):
+        return True, interval
+    
+    return (now - float(last)) >= interval, interval
