@@ -56,5 +56,11 @@ def format_event(e: dict) -> str:
         lines = [ln.strip() for ln in err.splitlines() if ln.strip()]
         err_line = lines[-1] if lines else ""
     
+    # Lock
+    if e.get("skipped_due_to_lock"):
+        lg = e.get("lock_group", "")
+        tail = f" skipped(loc{lg})"
+        return f"{t} ok={ok} {ms:>10} run_id={run_id}{tail}"
+    
     tail = f" {err_line}" if err_line else ""
     return f"{t} ok={ok} {ms:>10} run_id={run_id}{tail}"
