@@ -13,6 +13,8 @@ from .log_rotate import rotate_logs
 from .exporter import export_csv
 from .report import build_report, format_report
 from .locks import acquire_file_lock, release_file_lock
+from .scheduler_state import load_state
+from .scheduler import get_interval_seconds
 
 def main(argv=None) -> int:
     argv = argv or sys.argv[1:]
@@ -124,6 +126,28 @@ def main(argv=None) -> int:
             print(f"{sid:10} {status:8} last_run={when} ok={ok}")
         return 0
 
+    if cmd == "schedule":
+        scripts = discover_scripts()
+        state = load_state()
+        now = time.time()
+
+        print("Schedules:")
+        for sid in sorted(scripts.keys()):
+            s = scripts[sid]
+            if not s.enabled:
+                continue
+            interval = get_interval_seconds(s)
+            if interval is None:
+                continue
+
+            last = state.get(sid, {}).get("last_fired_at")
+            if isinstance(last, (int, float)):
+                due_in = max(0.0, interval - (now - float(last)))
+                print(f"{sid:10} interval={interval:>6.1f}s due_in={due_in:>6.1f}s")
+            else:
+                print(f"{sid:10} interval={interval:>6.1f}s due_in= now")
+        return 0
+    
     if cmd == "tail":
         # Usage: tail [n]
         n = 20
