@@ -14,6 +14,11 @@ class Script:
     schedule: dict
     path: Path
 
+    # Locking
+    lock_group: str | None = None
+    lock_mode = str = "skip"
+    lock_timeout_seconds: float = 0.0
+
 def _load_manifest(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -33,6 +38,11 @@ def discover_scripts() -> Dict[str, Script]:
 
         data = _load_manifest(manifest)
 
+        # Backward compatible
+        lock_group = data.get("lock_group", data.get("lock"))
+        lock_mode = data.get("lock_mode", "skip")
+        lock_timeout_seconds = float(data.get("lock_timeout_seconds", 0.0) or 0.0)
+
         s = Script(
             id=data["id"],
             name=data.get("name", data["id"]),
@@ -40,6 +50,9 @@ def discover_scripts() -> Dict[str, Script]:
             entrypoint=data["entrypoint"],
             schedule=data.get("schedule", {}),
             path=script_dir,
+            lock_group=lock_group,
+            lock_mode=lock_mode,
+            lock_timeout_seconds=lock_timeout_seconds,
         )
         scripts[s.id] = s
     
