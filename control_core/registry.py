@@ -19,6 +19,16 @@ class Script:
     lock_mode: str = "skip"
     lock_timeout_seconds: float = 0.0
 
+def _valid_hhmm(s: str) -> bool:
+    try:
+        parts = s.strip().split(":")
+        if len(parts) != 2:
+            return False
+        hh = int(parts[0]); mm = int(parts[1])
+        return 0 <= hh <= 23 and 0 <= mm <= 59
+    except Exception:
+        return False
+
 def _load_manifest(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
