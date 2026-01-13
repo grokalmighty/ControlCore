@@ -1,0 +1,11 @@
+{
+  "id": "idle",
+  "name": "Idle Script",
+  "enabled": true,
+  "schedule": {
+    "type": "event",
+    "event": "idle",
+    "seconds": 5.0
+  },
+  "entrypoint": "control_core.scripts.idle.main:main"
+}
