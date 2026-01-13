@@ -1,0 +1,37 @@
+Script started on Tue Jan 13 11:59:36 2026
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004h/opt/homebrew/bin/python3[?2004l
+Python 3.13.4 (main, Jun  3 2025, 15:34:24) [Clang 17.0.0 (clang-1700.0.13.3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+[?7l[?2004h[?1h=[?25l[1A
+[1;35m>>> [0m[4D[?12l[?25h[4C[?2004l[?1l>[?7h
+KeyboardInterrupt
+[?7l[?2004h[?1h=[?25l[1A
+[1;35m>>> [0m[4D[?12l[?25h[4C[?2004l[?1l>[?7h
+KeyboardInterrupt
+[?7l[?2004h[?1h=[?25l[1A
+[1;35m>>> [0m[4D[?12l[?25h[4C[?25l[4D[1;35m>>> [0mu[5D[?12l[?25h[5C[?25l[5D[1;35m>>> [0mui[6D[?12l[?25h[6C[?25l[6D[1;35m>>> [0muit[7D[?12l[?25h[7C[7D
+[?2004l[?1l>[?7hTraceback (most recent call last):
+  File [35m"<python-input-0>"[0m, line [35m1[0m, in [35m<module>[0m
+    uit
+[1;35mNameError[0m: [35mname 'uit' is not defined. Did you mean: 'quit'?[0m
+[?7l[?2004h[?1h=[?25l[1A
+[1;35m>>> [0m[4D[?12l[?25h[4C[?25l[4D[1;35m>>> [0mq[5D[?12l[?25h[5C[?25l[5D[1;35m>>> [0mqu[6D[?12l[?25h[6C[?25l[6D[1;35m>>> [0mqui[7D[?12l[?25h[7C[?25l[7D[K[1;35m>>> [0mqu[6D[?12l[?25h[6C[?25l[6D[1;35m>>> [0mqut[7D[?12l[?25h[7C[?25l[7D[K[1;35m>>> [0mqu[6D[?12l[?25h[6C[?25l[6D[1;35m>>> [0mqut[7D[?12l[?25h[7C[?25l[7D[K[1;35m>>> [0mqu[6D[?12l[?25h[6C[?25l[6D[1;35m>>> [0mqui[7D[?12l[?25h[7C[?25l[7D[1;35m>>> [0mquit[8D[?12l[?25h[8C[8D
+[?2004l[?1l>[?7h[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004h/opt/homebrew/bin/python3[25Dcurl http://localhost:5000/api/user1/dashboard[K[A[71Caccounts/1/insights[A[29C-X POST http://localhost:5000/api/user1/transactions \
+  -H "Content-Type: application/json" \[K
+  -d '{[K
+    "amount": -5.50,[K
+    "description": "Starbucks",[K
+    "account_id": 1,[K
+    "category": "coffee"[K
+  }'[K[8A[39C[8P[29Cr1/accounts/1/insights   [1B[K[1B[K[1B[K[1B[K[1B[K[1B[K[1B[K[7A[14C[A[61Cdashboard          [10D[A[34C/opt/homebrew/bin/python3[K[1B[K[A[63C                       /  ppyt hton -     thon - m control_cor. e.lci   cli enable app[?2004l[1BEnabled app
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hppython -m control_core.cl  s  s   set-app-open <app    app Co [Kdde[?2004l
+/Users/jas/miniconda3/bin/python: No module named control_core.__main__; 'control_core' is a package and cannot be directly executed
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hpython -m control_core set-app-open app Code[K[A[79C. set-app-open app Code[A[58Cc set-app-open app Code[A[58Cl set-app-open app Code[A[58Co set-app-open a[1Bp Code[A[58C[P[16Cp Code [A[57Ci set-app-open a[1Bp Code[A[58C[?2004l[1B
+Set app to run on app_open (['Code'])
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hppython 0-m    -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+^CDaemon exiting
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hpython -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+[12:01:31] event -> ran app ok=True run_id=d097b4ee-f11c-49df-8ece-3087c668e0de (event=app_open)
+[12:01:31] event -> ran app ok=True run_id=e4604aff-9c9d-4237-ac90-4638461f68f2 (event=app_open)
