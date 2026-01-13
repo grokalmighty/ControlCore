@@ -81,6 +81,17 @@ def main(poll_interval: float = 0.5) -> int:
                         last_idle_mode = mode
                         events.append({"type": "idle_state", "mode": mode, "idle_seconds": idle_seconds})
 
+            # App open/close 
+            cur = list_process_names()
+            opened = sorted(cur - last_proc_names)
+            closed = sorted(last_proc_names - cur)
+            last_proc_names = cur
+            
+            for name in opened:
+                events.append({"type": "app_open", "app": name})
+            for name in closed:
+                events.append({"type": "app_close", "app": name})
+            # Dispatch
             for ev in events:
                 for sid, s in scripts.items():
                     if not s.enabled:
