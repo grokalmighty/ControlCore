@@ -49,3 +49,15 @@ def validate_script_folder(folder: str) -> tuple[bool, list[str]]:
             errs.append("Missing main.py")
     
     return (len(errs) == 0), errs
+
+def validate_time(t: str) -> bool:
+    if ":" not in t:
+        return False
+    a = t.split(":")
+    if len(a) != 2:
+        return False
+    try:
+        hh = int(a[0]); mm = int(a[1])
+        return 0 <= hh <= 23 and 0 <= mm <= 59
+    except Exception:
+        return False

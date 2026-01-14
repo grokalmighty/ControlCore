@@ -56,7 +56,6 @@ def main(poll_interval: float = 0.5) -> int:
         last_apps = list_running_apps_macos()
         idle_fired: Dict[str, bool] = {}
         event_cooldown: Dict[str, float] = {}
-        
         while not stop_flag["stop"]:
             now = time.time()
             scripts = discover_scripts()
@@ -126,6 +125,14 @@ def main(poll_interval: float = 0.5) -> int:
             # Dispatch other discrete events
             for ev in events:
                 for sid, s in scripts.items():
+
+                    # Prevent scripts from rapidly firing
+                    cooldown = 3.0
+                    last = event_cooldown.get(sid, 0.0)
+                    if now - last < cooldown:
+                        continue
+                    event_cooldown[sid] = now
+
                     if not s.enabled:
                         continue
                     sched = s.schedule or {}

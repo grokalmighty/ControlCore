@@ -1,10 +1,15 @@
 {
   "id": "example",
   "name": "Example Script",
-  "enabled": false,
+  "enabled": true,
   "schedule": {
-    "type": "interval",
-    "seconds": 3.0
+    "type": "time",
+    "at": [
+      "11:20",
+      "11:22",
+      "11:24"
+    ],
+    "tz": "America/New_York"
   },
   "entrypoint": "control_core.scripts.example.main:main"
 }

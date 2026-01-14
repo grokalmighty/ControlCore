@@ -5,7 +5,7 @@ from .registry import discover_scripts, list_scripts, update_manifest
 from .runner import run_script
 from .installer import install_script_from_folder
 from .logs import last_run_by_script, tail_follow
-from .validator import validate_script_folder
+from .validator import validate_script_folder, validate_time
 from .daemon_state import read_pid, pid_is_running, PID_PATH, LOCKS_DIR
 from .stats import compute_stats
 from .history import get_history, format_event
@@ -91,11 +91,12 @@ def main(argv=None) -> int:
 
     if cmd == "set-time":
         if len(argv) < 3:
-            print("Usage: python -m control_core.cli set-time <id> <HH:MM> [--tz <IANA_TZ>]")
+            print("Usage: python -m control_core.cli set-time <id> <HH:MM,HH:MM,...> [--tz <IANA_TZ>]")
             return 2
         
         script_id = argv[1]
-        at = argv[2]
+        raw = argv[2]
+        times = [t.strip() for t in raw.split(",") if t.strip()]
 
         tz = "America/New_York"
         if "--tz" in argv:
@@ -104,22 +105,17 @@ def main(argv=None) -> int:
                 print("Missing value after --tz")
                 return 2
             tz = argv[i + 1]
+
+        bad = [t for t in times if not validate_time(t)]
+        if bad:
+            print(f"Invalid itmes(s): {bad}. Use HH:MM (24-hour).")
+            return 2
         
         def updater(m):
-            m["schedule"] = {"type": "time", "at": at, "tz": tz}
+            m["schedule"] = {"type": "time", "at": times, "tz": tz}
 
-        if ":" not in at or len(at.split(":")) != 2:
-            print("time must be HH:MM (24-hour)")
-            return 2
-        try:
-            hh = int(at.split(":")[0]); mm = int(at.split(":")[1])
-            if not (0 <= hh <= 23 and 0 <= mm <= 59):
-                raise ValueError()
-        except ValueError:
-            print("time must be HH:MM (00:00 to 23:59)")
-            return 2
         update_manifest(script_id, updater)
-        print(f"Set {script_id} daily time to {at} ({tz})")
+        print(f"Set {script_id} daily time(s) to {times} ({tz})")
         return 0
     
     if cmd == "set-time-weekdays":

@@ -418,4 +418,57 @@ Control Core daemon starting...(Ctrl+C to stop)
 [10:49:42] event -> ran idle ok=True run_id=d2d4040c-ea78-493c-bc9b-46284cd324a0 (event=idle)
 [10:49:59] event -> ran idle ok=True run_id=64ac598c-5a30-453d-a25c-20e5e4ede9f8 (event=idle)
 ^CDaemon exiting
-[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004h
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hggit add .[?2004l
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hggit commit -m "Fix idle to only triger   ger on [Kcce b  per interval"[?2004l
+g[main b34c2d2] Fix idle to only trigger once per interval
+ 12 files changed, 272 insertions(+), 100 deletions(-)
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hggit push[?2004l
+Enumerating objects: 36, done.
+Counting objects:   2% (1/36)Counting objects:   5% (2/36)Counting objects:   8% (3/36)Counting objects:  11% (4/36)Counting objects:  13% (5/36)Counting objects:  16% (6/36)Counting objects:  19% (7/36)Counting objects:  22% (8/36)Counting objects:  25% (9/36)Counting objects:  27% (10/36)Counting objects:  30% (11/36)Counting objects:  33% (12/36)Counting objects:  36% (13/36)Counting objects:  38% (14/36)Counting objects:  41% (15/36)Counting objects:  44% (16/36)Counting objects:  47% (17/36)Counting objects:  50% (18/36)Counting objects:  52% (19/36)Counting objects:  55% (20/36)Counting objects:  58% (21/36)Counting objects:  61% (22/36)Counting objects:  63% (23/36)Counting objects:  66% (24/36)Counting objects:  69% (25/36)Counting objects:  72% (26/36)Counting objects:  75% (27/36)Counting objects:  77% (28/36)Counting objects:  80% (29/36)Counting objects:  83% (30/36)Counting objects:  86% (31/36)Counting objects:  88% (32/36)Counting objects:  91% (33/36)Counting objects:  94% (34/36)Counting objects:  97% (35/36)Counting objects: 100% (36/36)Counting objects: 100% (36/36), done.
+Delta compression using up to 10 threads
+Compressing objects:   5% (1/20)Compressing objects:  10% (2/20)Compressing objects:  15% (3/20)Compressing objects:  20% (4/20)Compressing objects:  25% (5/20)Compressing objects:  30% (6/20)Compressing objects:  35% (7/20)Compressing objects:  40% (8/20)Compressing objects:  45% (9/20)Compressing objects:  50% (10/20)Compressing objects:  55% (11/20)Compressing objects:  60% (12/20)Compressing objects:  65% (13/20)Compressing objects:  70% (14/20)Compressing objects:  75% (15/20)Compressing objects:  80% (16/20)Compressing objects:  85% (17/20)Compressing objects:  90% (18/20)Compressing objects:  95% (19/20)Compressing objects: 100% (20/20)Compressing objects: 100% (20/20), done.
+Writing objects:   5% (1/20)Writing objects:  10% (2/20)Writing objects:  15% (3/20)Writing objects:  20% (4/20)Writing objects:  25% (5/20)Writing objects:  30% (6/20)Writing objects:  35% (7/20)Writing objects:  40% (8/20)Writing objects:  45% (9/20)Writing objects:  50% (10/20)Writing objects:  55% (11/20)Writing objects:  60% (12/20)Writing objects:  65% (13/20)Writing objects:  70% (14/20)Writing objects:  75% (15/20)Writing objects:  80% (16/20)Writing objects:  85% (17/20)Writing objects:  90% (18/20)Writing objects:  95% (19/20)Writing objects: 100% (20/20)Writing objects: 100% (20/20), 19.55 KiB | 6.52 MiB/s, done.
+Total 20 (delta 15), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas:   0% (0/15)[Kremote: Resolving deltas:   6% (1/15)[Kremote: Resolving deltas:  13% (2/15)[Kremote: Resolving deltas:  20% (3/15)[Kremote: Resolving deltas:  26% (4/15)[Kremote: Resolving deltas:  33% (5/15)[Kremote: Resolving deltas:  40% (6/15)[Kremote: Resolving deltas:  46% (7/15)[Kremote: Resolving deltas:  53% (8/15)[Kremote: Resolving deltas:  60% (9/15)[Kremote: Resolving deltas:  66% (10/15)[Kremote: Resolving deltas:  73% (11/15)[Kremote: Resolving deltas:  80% (12/15)[Kremote: Resolving deltas:  86% (13/15)[Kremote: Resolving deltas:  93% (14/15)[Kremote: Resolving deltas: 100% (15/15)[Kremote: Resolving deltas: 100% (15/15), completed with 15 local objects.[K
+To github.com:grokalmighty/usb.git
+   91ed828..b34c2d2  main -> main
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hppython -m control_corec .cli stop-daemon[?2004l
+Daemon not running (no pid file at /Users/jas/projects/usb/data/daemon.pid)
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hppyto hon -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+[11:05:37] ran example ok=True run_id=1532f7db-de09-48e2-ad5f-3ddf6d1339a9
+[11:05:40] ran example ok=True run_id=84ed9947-91e8-40b5-8135-44641d0db335
+[11:05:42] event -> ran idle ok=True run_id=326cb71b-861c-4f43-8c04-782dfcfd1ea4 (event=idle)
+[11:05:43] ran example ok=True run_id=43c02da3-33d6-4152-89c6-2a1ff1178d4e
+[11:05:46] ran example ok=True run_id=74fbfafa-7eb1-4b34-bf72-82702fddf255
+[11:05:50] ran example ok=True run_id=83b9013d-7b97-472a-b2a5-4e3cfc1f9fa1
+[11:05:53] ran example ok=True run_id=1d8f479e-6522-42ae-a8c8-dcf4876b0e22
+[11:05:56] ran example ok=True run_id=49507e00-e075-4c44-b809-6ababe8d2bae
+[11:05:59] ran example ok=True run_id=3be4715c-96d4-49f3-8250-3b45837188cc
+[11:06:02] ran example ok=True run_id=4f971093-ecb8-4165-bec6-8df5712e7bc0
+[11:06:06] ran example ok=True run_id=4586b7d9-7a31-4571-8fc7-55fa2bebcbf9
+[11:06:09] ran example ok=True run_id=e9d9d7f1-0956-4e9d-982a-c607e0d6e26c
+[11:06:12] ran example ok=True run_id=43d10d96-a02d-4d3c-8ff0-d2799dd2fa3a
+[11:06:15] ran example ok=True run_id=80577147-28a3-4ac2-a4b4-eae9ff392d5f
+[11:06:19] ran example ok=True run_id=e3874196-602d-4dad-8581-6f65365ac26b
+[11:06:22] ran example ok=True run_id=4b2fbfe5-4db6-4669-ace0-b3c308a22d42
+[11:06:30] event -> ran idle ok=True run_id=17df826f-ff8f-4dd9-82b6-9ea627c966c4 (event=idle)
+[11:06:43] event -> ran idle ok=True run_id=f5db6140-8813-4052-a794-b32fa71bc29c (event=idle)
+[11:06:53] event -> ran idle ok=True run_id=472dfab9-ec8a-45d9-82c2-d454ade60347 (event=idle)
+[11:07:00] ran example ok=True run_id=42f40b04-a7d8-4127-8ac1-53908661a21c
+[11:09:55] event -> ran idle ok=True run_id=d7f8cfdc-26c4-43a2-95c8-a2b455bf14ae (event=idle)
+[11:10:01] event -> ran idle ok=True run_id=a04b5838-95ac-47f4-8415-fb87dbb88e5a (event=idle)
+^CDaemon exiting
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hpython -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+[11:18:11] event -> ran idle ok=True run_id=62bd2823-954b-4e4a-9e10-91e2aadf35e0 (event=idle)
+^CDaemon exiting
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hpython -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+[11:18:53] event -> ran idle ok=True run_id=52d2cabc-5944-4e77-86a3-6e1f50e134d3 (event=idle)
+^CDaemon exiting
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Jasmines-MacBook-Pro.local/Users/jas/projects/usb[0m[27m[24m[J(base) jas@Jasmines-MacBook-Pro usb % [K[?2004hpython -m control_core.daemon[?2004l
+Control Core daemon starting...(Ctrl+C to stop)
+[11:20:29] ran example ok=True run_id=ecf2f918-6c6f-431a-af76-c50f821eedec
+[11:20:34] event -> ran idle ok=True run_id=b6abb66e-0af4-4ae1-be7b-03418b1bb04e (event=idle)
+[11:22:00] ran example ok=True run_id=7af013c7-8349-482c-b7e5-7c61d78e9b6c
