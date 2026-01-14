@@ -56,6 +56,8 @@ def main(poll_interval: float = 0.5) -> int:
         last_apps = list_running_apps_macos()
         idle_fired: Dict[str, bool] = {}
         event_cooldown: Dict[str, float] = {}
+        event_seen: Dict[tuple[str, str], float] = {}
+        EVENT_DEBOUNCE_SECONDS = 2.0
         while not stop_flag["stop"]:
             now = time.time()
             scripts = discover_scripts()
@@ -76,9 +78,18 @@ def main(poll_interval: float = 0.5) -> int:
             last_apps = cur_apps
 
             for name in opened:
-                events.append({"type": "app_open", "app": name})
+                k = ("app_open", name)
+                last = event_seen.get(k, 0.0)
+                if now - last >= EVENT_DEBOUNCE_SECONDS:
+                    event_seen[k] = now
+                    events.append({"type": "app_open", "app": name})
+            
             for name in closed:
-                events.append({"type": "app_close", "app": name})
+                k = ("app_close", name)
+                last = event_seen.get(k, 0.0)
+                if now - last >= EVENT_DEBOUNCE_SECONDS:
+                    event_seen[k] = now
+                    events.append({"type": "app_close", "app": name})
             
             # Network up/down
             ip = get_local_ip()
