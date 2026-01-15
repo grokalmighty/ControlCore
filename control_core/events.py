@@ -63,7 +63,7 @@ def get_local_ip() -> Optional[str]:
     except Exception:
         return None
 
-def match_apps(event_apps: Optional[List[str]], opened_or_closed: str) -> bool:
+def match_apps(event_apps: Optional[List[str]], app_name: str) -> bool:
     """
     If event_apps is None/empty => match any app.
     Else match against list.
@@ -71,7 +71,10 @@ def match_apps(event_apps: Optional[List[str]], opened_or_closed: str) -> bool:
 
     if not event_apps:
         return True
-    return opened_or_closed in set(event_apps)
+    
+    target = normalize_app_name(app_name)
+    allowed = {normalize_app_name(a) for a in event_apps if isinstance(a, str)}
+    return target in allowed
 
 def normalize_app_name(name: str) -> str:
     n = (name or "").strip()
