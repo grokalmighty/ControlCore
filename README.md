@@ -138,7 +138,8 @@ python -m control_core.cli set-time <script_id> 09:00 --month 1,6,12 --dom 1,15
 ## Event trigger examples
 
 ### When Discord opens or closes 
-```bash python -m control_core.cli set-events <script_id> app_open,app_close --apps Discord
+```bash 
+python -m control_core.cli set-events <script_id> app_open,app_close --apps Discord
 ```
 
 ### Idle threshold 
