@@ -1,6 +1,6 @@
 # Control Core
 
-Control Core is a daemon-based automation framework that lets you install “scripts” (small Python tasks) and run them automatically based on **time schedules** or **system events** (e.g., app open/close, idle, network changes). It’s designed to centralize recurring maintenance, data acquisition, and workflow automation into one consistent system.
+Control Core is a daemon-based automation framework that lets you install scripts and run them automatically based on **time schedules** or **system events** (like...app open/close, idle, network changes). It’s designed to centralize recurring maintenance, data acquisition, and workflow automation into one consistent system.
 
 ---
 
