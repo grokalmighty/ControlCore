@@ -157,16 +157,16 @@ python -m control_core.cli set-events <script_id> network_up,network_down
 ```bash
 python -m control_core.cli tail 50
 ```
-```bash
 ### View per-script history
+```bash
 python -m control_core.cli history <script_id> 20
 ```
-```bash
 ### Basic stats
+```bash
 python -m control_core.cli stats 200
 ```
-```bash
 ### Export logs to CSV
+```bash
 python -m control_core.cli export out.csv 5000
 ```
 ---
