@@ -89,7 +89,7 @@ def main(poll_interval: float = 0.5) -> int:
             for name in opened:
                 k = ("app_open", name)
                 last = app_event_cooldown.get(k, 0.0)
-                if now - last >= APP_EVENT_COOLDOWN_SECONDS
+                if now - last >= APP_EVENT_COOLDOWN_SECONDS:
                     app_event_cooldown[k] = now
                     events.append({"type": "app_open", "app": normalize_app_name(name)})
             
