@@ -87,3 +87,118 @@ This project attemps to make some optimizations but still has some tradeoffs
 ### Run the daemon
 ```bash
 python -m control_core.daemon
+```
+---
+
+### List scripts
+```bash
+python -m control_core.cli list
+```
+---
+
+### Enable/disable
+```bash
+python -m control_core.cli enable <script_id>
+python -m control_core.cli disable <script_id>
+```
+---
+
+### Manual run / trigger with payload
+```bash
+python -m control_core.cli run <script_id>
+python -m control_core.cli trigger <script_id> --payload '{"note":"hello"}'
+```
+---
+
+## Scheduling examples
+
+### Interval
+```bash
+python -m control_core.cli set-interval <script_id> 60
+```
+
+### Time
+
+#### Every day
+```bash
+python -m control_core.cli set-time <script_id> 09:00,17:30
+```
+
+#### Only on weekdays
+```bash
+python -m control_core.cli set-time <script_id> 09:00 --dow 1,2,3,4,5
+```
+
+#### Only in certain months + days of the month
+```bash
+python -m control_core.cli set-time <script_id> 09:00 --month 1,6,12 --dom 1,15
+```
+---
+
+## Event trigger examples
+
+### When Discord opens or closes 
+```bash python -m control_core.cli set-events <script_id> app_open,app_close --apps Discord
+```
+
+### Idle threshold 
+```bash
+python -m control_core.cli set-events <script_id> idle --seconds 20
+```
+### Network
+```bash
+python -m control_core.cli set-events <script_id> network_up,network_down
+```
+---
+
+## Observability
+
+### View recent logs
+```bash
+python -m control_core.cli tail 50
+```
+```bash
+### View per-script history
+python -m control_core.cli history <script_id> 20
+```
+```bash
+### Basic stats
+python -m control_core.cli stats 200
+```
+```bash
+### Export logs to CSV
+python -m control_core.cli export out.csv 5000
+```
+---
+
+## Script format
+```bash
+{
+  "id": "example",
+  "name": "Example Script",
+  "enabled": true,
+  "entrypoint": "control_core.scripts.example.main:main",
+  "schedule": {
+    "type": "event",
+    "events": ["app_open", "app_close"],
+    "apps": ["Discord"]
+  }
+}
+```
+---
+
+## Future work
+
+- Add a UI for uploading scripts and selecting triggers visually (calendar + app picker)
+- Add pipeline concepts (script outputs feeding other scripts / projects)
+- Improve event sources (OS event subscriptions, richer app identity)
+- Optional security module:
+   - full process monitoring
+   - network connection inspection
+   - policy-based blocking / alerting
+
+---
+
+## Status
+
+This is a functioning v1 system designed to be iterated on without scope creep: the core event/scheduler engine is stable, while higher-level UX and security integrations are planned extensions.
